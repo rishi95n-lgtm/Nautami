@@ -147,7 +147,9 @@ function App() {
         </div>
         
         <div className="success-content">
-          <h1 className="success-title" data-testid="success-message">She said YES! 💜</h1>
+          <h1 className="success-title" data-testid="success-message">
+            I love you <Heart className="inline-heart" fill="#dc2626" color="#dc2626" />
+          </h1>
           
           <div className="image-container" data-testid="couple-image-container">
             <img 
@@ -155,35 +157,56 @@ function App() {
               alt="Our beautiful moment" 
               className="couple-image"
             />
-          </div>
-
-          <div className="audio-player" data-testid="audio-player">
-            <button 
-              className="play-button" 
-              onClick={togglePlayPause}
-              data-testid="play-pause-button"
-              aria-label={isPlaying ? "Pause" : "Play"}
-            >
-              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-            </button>
             
-            <div className="progress-container">
-              <span className="time-display" data-testid="current-time">{formatTime(currentTime)}</span>
-              <div 
-                className="progress-bar" 
-                onClick={handleSeek}
-                data-testid="progress-bar"
-              >
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${(currentTime / duration) * 100}%` }}
-                />
-                <div 
-                  className="progress-thumb" 
-                  style={{ left: `${(currentTime / duration) * 100}%` }}
-                />
+            {/* Audio Player Overlay on Image */}
+            <div className="audio-player-overlay" data-testid="audio-player">
+              <div className="audio-controls">
+                <button 
+                  className={`control-button ${isRepeat ? 'active' : ''}`}
+                  onClick={toggleRepeat}
+                  data-testid="repeat-button"
+                  aria-label="Repeat"
+                >
+                  <Repeat size={18} />
+                </button>
+                
+                <button 
+                  className="control-button stop-button"
+                  onClick={handleStop}
+                  data-testid="stop-button"
+                  aria-label="Stop"
+                >
+                  <Square size={18} />
+                </button>
+                
+                <button 
+                  className="play-button-overlay" 
+                  onClick={togglePlayPause}
+                  data-testid="play-pause-button"
+                  aria-label={isPlaying ? "Pause" : "Play"}
+                >
+                  {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+                </button>
               </div>
-              <span className="time-display" data-testid="duration">{formatTime(duration)}</span>
+              
+              <div className="progress-container-overlay">
+                <span className="time-display" data-testid="current-time">{formatTime(currentTime)}</span>
+                <div 
+                  className="progress-bar-overlay" 
+                  onClick={handleSeek}
+                  data-testid="progress-bar"
+                >
+                  <div 
+                    className="progress-fill-overlay" 
+                    style={{ width: `${(currentTime / duration) * 100}%` }}
+                  />
+                  <div 
+                    className="progress-thumb-overlay" 
+                    style={{ left: `${(currentTime / duration) * 100}%` }}
+                  />
+                </div>
+                <span className="time-display" data-testid="duration">{formatTime(duration)}</span>
+              </div>
             </div>
           </div>
 
