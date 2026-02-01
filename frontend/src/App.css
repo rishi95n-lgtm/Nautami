@@ -134,7 +134,7 @@ body {
 /* Success Screen */
 .success-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #ddd6fe 100%);
+  background: linear-gradient(135deg, #4a0e0e 0%, #7d1414 50%, #5c0a0a 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,7 +155,7 @@ body {
 
 .floating-heart {
   position: absolute;
-  color: #a855f7;
+  color: #dc2626;
   opacity: 0.3;
   animation: floatUp 10s ease-in infinite;
   width: 24px;
@@ -187,11 +187,31 @@ body {
 }
 
 .success-title {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 700;
-  color: #7c3aed;
+  color: #fef2f2;
   margin-bottom: 2rem;
   animation: scaleIn 0.6s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.inline-heart {
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
 }
 
 @keyframes scaleIn {
@@ -208,6 +228,8 @@ body {
 .image-container {
   margin: 2rem auto;
   animation: fadeInUp 0.8s ease 0.3s both;
+  position: relative;
+  display: inline-block;
 }
 
 @keyframes fadeInUp {
@@ -223,53 +245,95 @@ body {
 
 .couple-image {
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   height: auto;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(124, 58, 237, 0.3);
-  border: 4px solid white;
+  box-shadow: 0 20px 60px rgba(220, 38, 38, 0.4);
+  border: 4px solid rgba(254, 242, 242, 0.3);
+  display: block;
 }
 
-/* Spotify-style Audio Player */
-.audio-player {
-  margin-top: 2rem;
-  background: rgba(255, 255, 255, 0.95);
+/* Audio Player Overlay on Image */
+.audio-player-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.6) 70%, transparent 100%);
   backdrop-filter: blur(10px);
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.2);
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-radius: 0 0 16px 16px;
+  animation: slideUp 1s ease 0.6s both;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.audio-controls {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
-  animation: fadeInUp 1s ease 0.6s both;
+  margin-bottom: 1rem;
 }
 
-.play-button {
-  width: 48px;
-  height: 48px;
+.control-button {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.control-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.control-button.active {
+  background: rgba(220, 38, 38, 0.8);
+  border-color: #dc2626;
+}
+
+.play-button-overlay {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
   color: white;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
+  transition: all 0.3s ease;
 }
 
-.play-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
+.play-button-overlay:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
 }
 
-.play-button:active {
+.play-button-overlay:active {
   transform: scale(0.98);
 }
 
-.progress-container {
-  flex: 1;
+.progress-container-overlay {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -277,41 +341,42 @@ body {
 
 .time-display {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #fef2f2;
   font-weight: 500;
   min-width: 35px;
   font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.progress-bar {
+.progress-bar-overlay {
   flex: 1;
   height: 6px;
-  background: #e5e7eb;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
   position: relative;
   cursor: pointer;
 }
 
-.progress-bar:hover .progress-thumb {
+.progress-bar-overlay:hover .progress-thumb-overlay {
   opacity: 1;
 }
 
-.progress-fill {
+.progress-fill-overlay {
   height: 100%;
-  background: linear-gradient(90deg, #a855f7 0%, #7c3aed 100%);
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
   border-radius: 3px;
   transition: width 0.1s linear;
 }
 
-.progress-thumb {
+.progress-thumb-overlay {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 14px;
   height: 14px;
-  background: #7c3aed;
+  background: #dc2626;
   border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.6);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
