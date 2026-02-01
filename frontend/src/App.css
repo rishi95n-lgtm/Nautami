@@ -199,6 +199,8 @@ body {
 }
 
 .inline-heart {
+  width: clamp(2.5rem, 6vw, 4rem);
+  height: clamp(2.5rem, 6vw, 4rem);
   animation: heartbeat 1.5s ease-in-out infinite;
 }
 
