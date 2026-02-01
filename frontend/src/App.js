@@ -1,52 +1,205 @@
-import { useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { Play, Pause, Heart } from "lucide-react";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const COUPLE_IMAGE = "https://customer-assets.emergentagent.com/job_473e0eb1-06d1-4804-b399-e0ac295e72d1/artifacts/audl2xnb_WhatsApp%20Image%202026-02-01%20at%2019.04.22.jpeg";
+const AUDIO_FILE = "https://customer-assets.emergentagent.com/job_473e0eb1-06d1-4804-b399-e0ac295e72d1/artifacts/sdkrpd3f_For%20Nautami.m4a";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+function App() {
+  const [accepted, setAccepted] = useState(false);
+  const [noMessage, setNoMessage] = useState("");
+  const [yesPosition, setYesPosition] = useState({ top: "50%", left: "50%" });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const audioRef = useRef(null);
+
+  const moveYesButton = () => {
+    const maxX = 80;
+    const maxY = 70;
+    const minX = 10;
+    const minY = 20;
+    
+    const randomX = Math.random() * (maxX - minX) + minX;
+    const randomY = Math.random() * (maxY - minY) + minY;
+    
+    setYesPosition({
+      top: `${randomY}%`,
+      left: `${randomX}%`
+    });
+  };
+
+  const handleYesClick = () => {
+    setAccepted(true);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
+    }, 500);
+  };
+
+  const handleNoClick = () => {
+    setNoMessage("Try again! 💜");
+    setTimeout(() => setNoMessage(""), 2000);
+  };
+
+  const togglePlayPause = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
     }
   };
 
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleSeek = (e) => {
+    const progressBar = e.currentTarget;
+    const clickX = e.nativeEvent.offsetX;
+    const width = progressBar.offsetWidth;
+    const newTime = (clickX / width) * duration;
+    
+    if (audioRef.current) {
+      audioRef.current.currentTime = newTime;
+      setCurrentTime(newTime);
+    }
+  };
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   useEffect(() => {
-    helloWorldApi();
-  }, []);
+    if (accepted && audioRef.current) {
+      audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
+      audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+      
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+          audioRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        }
+      };
+    }
+  }, [accepted]);
+
+  if (accepted) {
+    return (
+      <div className="success-container" data-testid="success-screen">
+        <div className="hearts-background">
+          {[...Array(20)].map((_, i) => (
+            <Heart
+              key={i}
+              className="floating-heart"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${5 + Math.random() * 5}s`
+              }}
+            />
+          ))}
+        </div>
+        
+        <div className="success-content">
+          <h1 className="success-title" data-testid="success-message">She said YES! 💜</h1>
+          
+          <div className="image-container" data-testid="couple-image-container">
+            <img 
+              src={COUPLE_IMAGE} 
+              alt="Our beautiful moment" 
+              className="couple-image"
+            />
+          </div>
+
+          <div className="audio-player" data-testid="audio-player">
+            <button 
+              className="play-button" 
+              onClick={togglePlayPause}
+              data-testid="play-pause-button"
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+            </button>
+            
+            <div className="progress-container">
+              <span className="time-display" data-testid="current-time">{formatTime(currentTime)}</span>
+              <div 
+                className="progress-bar" 
+                onClick={handleSeek}
+                data-testid="progress-bar"
+              >
+                <div 
+                  className="progress-fill" 
+                  style={{ width: `${(currentTime / duration) * 100}%` }}
+                />
+                <div 
+                  className="progress-thumb" 
+                  style={{ left: `${(currentTime / duration) * 100}%` }}
+                />
+              </div>
+              <span className="time-display" data-testid="duration">{formatTime(duration)}</span>
+            </div>
+          </div>
+
+          <audio ref={audioRef} src={AUDIO_FILE} />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+    <div className="App" data-testid="valentine-proposal">
+      <div className="question-container">
+        <h1 className="question-title" data-testid="proposal-question">
+          Would you like to be my valentine?
+        </h1>
+        
+        <div className="buttons-area">
+          <button
+            className="yes-button"
+            onClick={handleYesClick}
+            onMouseEnter={moveYesButton}
+            style={{
+              position: 'absolute',
+              top: yesPosition.top,
+              left: yesPosition.left,
+              transform: 'translate(-50%, -50%)',
+              transition: 'all 0.5s ease'
+            }}
+            data-testid="yes-button"
+          >
+            YES 💜
+          </button>
 
-function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          <button
+            className="no-button"
+            onClick={handleNoClick}
+            data-testid="no-button"
+          >
+            No
+          </button>
+        </div>
+
+        {noMessage && (
+          <p className="no-message" data-testid="try-again-message">{noMessage}</p>
+        )}
+      </div>
     </div>
   );
 }
