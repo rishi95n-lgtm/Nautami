@@ -87,13 +87,26 @@ function App() {
 
   useEffect(() => {
     if (accepted && audioRef.current) {
-      audioRef.current.addEventListener('timeupdate', handleTimeUpdate);
-      audioRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+      const audio = audioRef.current;
+      
+      const handleError = (e) => {
+        console.log('Audio playback info:', e);
+        // Set default duration for display
+        setDuration(15);
+      };
+      
+      audio.addEventListener('timeupdate', handleTimeUpdate);
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.addEventListener('error', handleError);
+      audio.addEventListener('canplaythrough', () => {
+        console.log('Audio ready to play');
+      });
       
       return () => {
-        if (audioRef.current) {
-          audioRef.current.removeEventListener('timeupdate', handleTimeUpdate);
-          audioRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        if (audio) {
+          audio.removeEventListener('timeupdate', handleTimeUpdate);
+          audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+          audio.removeEventListener('error', handleError);
         }
       };
     }
