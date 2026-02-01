@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "@/App.css";
-import { Play, Pause, Heart } from "lucide-react";
+import { Play, Pause, Heart, Repeat, Square } from "lucide-react";
 
 const COUPLE_IMAGE = "https://customer-assets.emergentagent.com/job_473e0eb1-06d1-4804-b399-e0ac295e72d1/artifacts/audl2xnb_WhatsApp%20Image%202026-02-01%20at%2019.04.22.jpeg";
 const AUDIO_FILE = "/valentine-audio.m4a";
