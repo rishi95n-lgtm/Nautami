@@ -170,7 +170,7 @@ function App() {
             </div>
           </div>
 
-          <audio ref={audioRef} preload="auto" crossOrigin="anonymous">
+          <audio ref={audioRef} preload="auto">
             <source src={AUDIO_FILE} type="audio/mp4" />
             <source src={AUDIO_FILE} type="audio/mpeg" />
             Your browser does not support the audio element.
