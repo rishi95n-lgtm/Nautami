@@ -12,6 +12,7 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isRepeat, setIsRepeat] = useState(false);
   const audioRef = useRef(null);
 
   const moveYesButton = () => {
