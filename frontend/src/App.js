@@ -56,6 +56,22 @@ function App() {
     }
   };
 
+  const handleStop = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleRepeat = () => {
+    if (audioRef.current) {
+      audioRef.current.loop = !isRepeat;
+      setIsRepeat(!isRepeat);
+    }
+  };
+
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       setCurrentTime(audioRef.current.currentTime);
